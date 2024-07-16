@@ -1,0 +1,331 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>爬虫-03 | Liang Blog</title><meta name="author" content="Liang"><meta name="copyright" content="Liang"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="爬虫-03refer反爬&amp;MongoDB数据库有时我们爬取数据时会出现refer错误，这就是我们将要学的新的反爬点：refer跳转。并且在爬取数据后，我们通常会将数据存到数据库，方式使用和调用。 refer跳转部分特殊url的请求，会检查你是从哪一个url跳转过来的。比如我只允许我自己的网站访问我自己的图片服务器，那我的域名是www.google.com ，那么图片服务器每次取到Refer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="爬虫-03">
+<meta property="og:url" content="http://example.com/2024/07/07/crawler03/index.html">
+<meta property="og:site_name" content="Liang Blog">
+<meta property="og:description" content="爬虫-03refer反爬&amp;MongoDB数据库有时我们爬取数据时会出现refer错误，这就是我们将要学的新的反爬点：refer跳转。并且在爬取数据后，我们通常会将数据存到数据库，方式使用和调用。 refer跳转部分特殊url的请求，会检查你是从哪一个url跳转过来的。比如我只允许我自己的网站访问我自己的图片服务器，那我的域名是www.google.com ，那么图片服务器每次取到Refer">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/img/Crawler/Crawler.png">
+<meta property="article:published_time" content="2024-07-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-07-11T07:50:50.201Z">
+<meta property="article:author" content="Liang">
+<meta property="article:tag" content="Crawler">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/Crawler/Crawler.png"><link rel="shortcut icon" href="/img/logo.png"><link rel="canonical" href="http://example.com/2024/07/07/crawler03/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=4.13.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"languages":{"hits_empty":"找不到您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.11.1/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '爬虫-03',
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2024-07-11 15:50:50'
+}</script><script>(win=>{
+      win.saveToLocal = {
+        set: (key, value, ttl) => {
+          if (ttl === 0) return
+          const now = Date.now()
+          const expiry = now + ttl * 86400000
+          const item = {
+            value,
+            expiry
+          }
+          localStorage.setItem(key, JSON.stringify(item))
+        },
+      
+        get: key => {
+          const itemStr = localStorage.getItem(key)
+      
+          if (!itemStr) {
+            return undefined
+          }
+          const item = JSON.parse(itemStr)
+          const now = Date.now()
+      
+          if (now > item.expiry) {
+            localStorage.removeItem(key)
+            return undefined
+          }
+          return item.value
+        }
+      }
+    
+      win.getScript = (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        script.onerror = reject
+        script.onload = script.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          script.onload = script.onreadystatechange = null
+          resolve()
+        }
+
+        Object.keys(attr).forEach(key => {
+          script.setAttribute(key, attr[key])
+        })
+
+        document.head.appendChild(script)
+      })
+    
+      win.getCSS = (url, id = false) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onerror = reject
+        link.onload = link.onreadystatechange = function() {
+          const loadState = this.readyState
+          if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+          link.onload = link.onreadystatechange = null
+          resolve()
+        }
+        document.head.appendChild(link)
+      })
+    
+      win.activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+        if (t === 'dark') activateDarkMode()
+        else if (t === 'light') activateLightMode()
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    
+      const detectApple = () => {
+        if(/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)){
+          document.documentElement.classList.add('apple')
+        }
+      }
+      detectApple()
+    })(window)</script><link rel="stylesheet" href="/css/custom.css"><link rel="stylesheet" href="/css/transparent.css" media="defer" onload="this.media='all'"><meta name="generator" content="Hexo 7.3.0"></head><body><div id="loading-box"><div class="loading-left-bg"></div><div class="loading-right-bg"></div><div class="spinner-box"><div class="configure-border-1"><div class="configure-core"></div></div><div class="configure-border-2"><div class="configure-core"></div></div><div class="loading-word">加载中...</div></div></div><script>(()=>{
+  const $loadingBox = document.getElementById('loading-box')
+  const $body = document.body
+  const preloader = {
+    endLoading: () => {
+      $body.style.overflow = ''
+      $loadingBox.classList.add('loaded')
+    },
+    initLoading: () => {
+      $body.style.overflow = 'hidden'
+      $loadingBox.classList.remove('loaded')
+    }
+  }
+
+  preloader.initLoading()
+  window.addEventListener('load',() => { preloader.endLoading() })
+
+  if (true) {
+    document.addEventListener('pjax:send', () => { preloader.initLoading() })
+    document.addEventListener('pjax:complete', () => { preloader.endLoading() })
+  }
+})()</script><div id="web_bg"></div><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img is-center"><img src="/img/avatar.jpg" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="sidebar-site-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><hr class="custom-hr"/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E7%85%A7%E7%89%87%EF%BC%9A/photography/"><i class="fa-fw fas fa-image"></i><span> 清单</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('/img/Crawler/Crawler.png')"><nav id="nav"><span id="blog-info"><a href="/" title="Liang Blog"><span class="site-name">Liang Blog</span></a></span><div id="menus"><div id="search-button"><a class="site-page social-icon search" href="javascript:void(0);"><i class="fas fa-search fa-fw"></i><span> 搜索</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 时间轴</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/%E7%85%A7%E7%89%87%EF%BC%9A/photography/"><i class="fa-fw fas fa-image"></i><span> 清单</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fas fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><a class="site-page" href="javascript:void(0);"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">爬虫-03</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2024-07-06T16:00:00.000Z" title="发表于 2024-07-07 00:00:00">2024-07-07</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2024-07-11T07:50:50.201Z" title="更新于 2024-07-11 15:50:50">2024-07-11</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/python/">python</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title="爬虫-03"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="爬虫-03"><a href="#爬虫-03" class="headerlink" title="爬虫-03"></a>爬虫-03</h1><h2 id="refer反爬-MongoDB数据库"><a href="#refer反爬-MongoDB数据库" class="headerlink" title="refer反爬&amp;MongoDB数据库"></a>refer反爬&amp;MongoDB数据库</h2><p>有时我们爬取数据时会出现refer错误，这就是我们将要学的新的反爬点：refer跳转。<br>并且在爬取数据后，我们通常会将数据存到数据库，方式使用和调用。</p>
+<h3 id="refer跳转"><a href="#refer跳转" class="headerlink" title="refer跳转"></a>refer跳转</h3><p>部分特殊url的请求，会检查你是从哪一个url跳转过来的。<br>比如我只允许我自己的网站访问我自己的图片服务器，那我的域名是<a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a> ，那么图片服务器每次取到Referer来判断一下是不是我自己的域名<a target="_blank" rel="noopener" href="http://www.google.com/">www.google.com</a> ，如果是就继续访问，不是就拦截。</p>
+<h3 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h3><p>数据库用来保存数据的，可以理解成特殊的为文件。但相对于文本文件，数据库提取数据较为方便，可以利用命令语句快速找到符合条件的数据，也方便多台机器操作，最为重要的是，它的读取速度很快。</p>
+<h3 id="数据库的分类"><a href="#数据库的分类" class="headerlink" title="数据库的分类"></a>数据库的分类</h3><ul>
+<li>关系型数据库<br> 关系型数据库（Relational Database，简称 RDB）是一种以关系（即表格）为基础的数据库，它采用了关系代数等数学概念和方法来处理数据。其核心思想是将数据存储在由多个表格组成的关系中，每个表格包含多行数据和多个列（即属性），每个属性只有一种数据类型。<ul>
+<li>oracle mysql</li>
+</ul>
+</li>
+<li>非关系型数据库<br>  非关系型数据库又被称为 NoSQL（Not Only SQL )，意为不仅仅是 SQL。通常指数据以对象的形式存储在数据库中，而对象之间的关系通过每个对象自身的属性来决定，常用于存储非结构化的数据。<ul>
+<li>mongodb redis</li>
+</ul>
+</li>
+</ul>
+<h3 id="MongoDB的下载"><a href="#MongoDB的下载" class="headerlink" title="MongoDB的下载"></a>MongoDB的下载</h3><ul>
+<li><p>下载安装文件：官方下载地址： <a target="_blank" rel="noopener" href="https://www.mongodb.com/try/download">https://www.mongodb.com/try/download</a><br> <img src="/img/crawler03/01.png"><br> 下载的文件是msi格式的，直接双击进入安装程序，注意取消勾选左下角图形化工具（Install MongoDB Compass），要不然安装时间会很长很长…<br> 然后点击next ，直到finish就结束安装了。这一步所有版本的操作都是一样的。</p>
+</li>
+<li><p>启动服务及验证：将mongodb文件中的bin文件的绝对路径配置到系统的环境变量中的path中：<br> <img src="/img/crawler03/02.png"><br> 启动服务的命令：</p>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongod --dbpath C:\environment\mongoDB\7.0\data\db</span><br></pre></td></tr></table></figure>
+<p> 这里我是在data文件中创建了一个db文件用来存储和管理数据。<br> 回车执行成功后，查看日志中打印的端口号是27017（不用看日志也知道这个是默认端口），浏览器访问，<a target="_blank" rel="noopener" href="http://localhost:27017/">http://localhost:27017/</a> 然后出现这个提示就成功了：<br> <img src="/img/crawler03/03.png"></p>
+</li>
+<li><p>命令函访问<br> 这一部分在版本的更新中造成了很大差异，在6及6以前的版本，会在安装程序中一并安装mongo指令，也就是bin文件中有mongo.exe，但在我用的版本开始，需要从官网下载一个mongosh工具，用这个命令代替之前内置的mongo命令进行数据的增删改查操作。<br> 下载链接：<a target="_blank" rel="noopener" href="https://www.mongodb.com/try/download/shell">https://www.mongodb.com/try/download/shell</a> 打开地址后MongoDB会自动检测你应下载的版本，直接点击下载按钮。<br> <img src="/img/crawler03/04.png"><br> 并将解压文件放在根目录下：<br> <img src="/img/crawler03/05.png"><br> 这样我们在终端输如mongosh后就可以进入数据库了，而exit就退出数据库了：<br> <img src="/img/crawler03/06.png"></p>
+</li>
+</ul>
+<h2 id="MongoDB数据库的操作"><a href="#MongoDB数据库的操作" class="headerlink" title="MongoDB数据库的操作"></a>MongoDB数据库的操作</h2><h3 id="认识MongoDB"><a href="#认识MongoDB" class="headerlink" title="认识MongoDB"></a>认识MongoDB</h3><p>mongodb文档类似于json对象（是一种轻量级的数据交换格式），旨在为web应用提供可扩展的高性能数据存储解决方案。<br><img src="/img/crawler03/07.png"></p>
+<h3 id="库操作"><a href="#库操作" class="headerlink" title="库操作"></a>库操作</h3><ul>
+<li>显示所有库：show dbs<br> 默认存在的三个数据库：admin、config、local。</li>
+<li>切换&#x2F;创建数据库：use 数据库名称</li>
+<li>查看所在库：db</li>
+<li>删除库：db.dropDatabase()（先切换到数据库）</li>
+</ul>
+<h3 id="集合操作"><a href="#集合操作" class="headerlink" title="集合操作"></a>集合操作</h3><ul>
+<li>显示当前数据库的集合：show collections</li>
+<li>创建集合：db.createCollection(’name‘)</li>
+<li>删除集合：db.集合名称.drop()</li>
+</ul>
+<h3 id="文档操作"><a href="#文档操作" class="headerlink" title="文档操作"></a>文档操作</h3><ul>
+<li>添加一条文档：db.集合名称.insert({键值对})</li>
+<li>添加多条文档：db.集合名称.insert([{键值对},{},…])</li>
+<li>查询文档：db.集合名称.find()</li>
+<li>格式化显示：db.集合名称.find().pretty()</li>
+<li>修改文档：db.集合名称.update({原内容},{新内容}) 会将整条文档进行更改</li>
+<li>指定修改属性：set后面是修改的值 db.集合名称.update({},{$set:{}})</li>
+<li>更新所有满足条件的文档：{multi:true}</li>
+<li>删除文档：db.集合名称.remove({name:’叶子’}) 和修改一样，会将整条文档删除，并且会将所有符合条件的文档全部删除</li>
+<li>只删除符合条件的第一条文档：{justOne:true}</li>
+<li>将所有文档删除：db.集合名称.remove({})</li>
+</ul>
+<p>id参数，mongodb文档都会有唯一的_id，当你不去设置时，mongodb会自动分配一个ObjectId。</p>
+<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><ul>
+<li>and条件：{$and:[{expression1},{expression2}]}</li>
+<li>or条件：{$or:[{expression1},{expression2}]}</li>
+</ul>
+<h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><ul>
+<li>$ne：不等于</li>
+<li>$gt：大于</li>
+<li>$lt：小于</li>
+<li>$gte：大于等于</li>
+<li>$lte：小于等于</li>
+</ul>
+<h3 id="MongoDB与python交互"><a href="#MongoDB与python交互" class="headerlink" title="MongoDB与python交互"></a>MongoDB与python交互</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymongo</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 建立连接</span></span><br><span class="line">    client = pymongo.MongoClient()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 指点数据库</span></span><br><span class="line">    db = client[<span class="string">&#x27;test&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 指定集合</span></span><br><span class="line">    collection = db[<span class="string">&#x27;test&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 数据操作</span></span><br><span class="line">	...</span><br></pre></td></tr></table></figure>
+
+<h2 id="B站案例"><a href="#B站案例" class="headerlink" title="B站案例"></a>B站案例</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">B站视频数据包的特征</span></span><br><span class="line"><span class="string">1.找数据包名问号前面出现m4s的</span></span><br><span class="line"><span class="string">2.连续不断出现的</span></span><br><span class="line"><span class="string">3.纯视频放在video，纯音频放在audio</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">B站纯视频纯音频的url，是动态变化着的，当爬取错误时，重新抓包，重新找url。</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="comment"># 将视频与音频合二为一的库</span></span><br><span class="line"><span class="keyword">from</span> moviepy.editor <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    video_url = <span class="string">&#x27;https://xy183x240x137x82xy.mcdn.bilivideo.cn:8082/v1/resource/1603917657-1-100113.m4s?agrr=0&amp;build=0&amp;buvid=D32D8719-608C-B543-6C88-43185ABB30BF69149infoc&amp;bvc=vod&amp;bw=120800&amp;deadline=1720500216&amp;e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M%3D&amp;f=u_0_0&amp;gen=playurlv2&amp;logo=A0020000&amp;mcdnid=50005723&amp;mid=700399010&amp;nbs=1&amp;nettype=0&amp;og=cos&amp;oi=2869466894&amp;orderid=0%2C3&amp;os=mcdn&amp;platform=pc&amp;sign=8d35f6&amp;traceid=trodrsPdnYYbPi_0_e_N&amp;uipk=5&amp;uparams=e%2Cuipk%2Cnbs%2Cdeadline%2Cgen%2Cos%2Coi%2Ctrid%2Cmid%2Cplatform%2Cog&amp;upsig=4b1efd5a28a81f0cb290071137615d07&#x27;</span></span><br><span class="line">    audio_url = <span class="string">&#x27;https://xy120x209x212x14xy.mcdn.bilivideo.cn:8082/v1/resource/1603917657-1-30232.m4s?agrr=0&amp;build=0&amp;buvid=D32D8719-608C-B543-6C88-43185ABB30BF69149infoc&amp;bvc=vod&amp;bw=11469&amp;deadline=1720500216&amp;e=ig8euxZM2rNcNbdlhoNvNC8BqJIzNbfqXBvEqxTEto8BTrNvN0GvT90W5JZMkX_YN0MvXg8gNEV4NC8xNEV4N03eN0B5tZlqNxTEto8BTrNvNeZVuJ10Kj_g2UB02J0mN0B5tZlqNCNEto8BTrNvNC7MTX502C8f2jmMQJ6mqF2fka1mqx6gqj0eN0B599M%3D&amp;f=u_0_0&amp;gen=playurlv2&amp;logo=A0020000&amp;mcdnid=50005723&amp;mid=700399010&amp;nbs=1&amp;nettype=0&amp;og=hw&amp;oi=2869466894&amp;orderid=0%2C3&amp;os=mcdn&amp;platform=pc&amp;sign=89a99b&amp;traceid=trgOLedHAXoXbn_0_e_N&amp;uipk=5&amp;uparams=e%2Cuipk%2Cnbs%2Cdeadline%2Cgen%2Cos%2Coi%2Ctrid%2Cmid%2Cplatform%2Cog&amp;upsig=f68726384c296ba7d19527ae6754136a&#x27;</span></span><br><span class="line"></span><br><span class="line">    headers_ = &#123;</span><br><span class="line">        <span class="string">&#x27;User-Agent&#x27;</span>: <span class="string">&#x27;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;refer&#x27;</span>: <span class="string">&#x27;https://www.bilibili.com/&#x27;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    video_data = requests.get(video_url, headers=headers_).content</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;video.mp4&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(video_data)</span><br><span class="line"></span><br><span class="line">    audio_data = requests.get(audio_url, headers=headers_).content</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;audio.mp3&#x27;</span>, <span class="string">&#x27;wb&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(audio_data)</span><br><span class="line"></span><br><span class="line">    ffmpeg_tools.ffmpeg_merge_video_audio(<span class="string">&#x27;video.mp4&#x27;</span>, <span class="string">&#x27;audio.mp3&#x27;</span>, <span class="string">&#x27;探班室友.mp4&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="selenium介绍"><a href="#selenium介绍" class="headerlink" title="selenium介绍"></a>selenium介绍</h2><h3 id="selenium"><a href="#selenium" class="headerlink" title="selenium"></a>selenium</h3><p>selenium是一个web的自动化测试工具，最初是为网站自动化测试而开发的。<br>selenium可以直接运行在浏览器上，它支持所有主流的浏览器（包括phantomjs这些无界面的浏览器）可以接受指令，让浏览器自动加载页面，获取需要的数据，甚至页面截屏。<br>可以模拟事件运行js，从而获取信息。</p>
+<h3 id="PhantomJS"><a href="#PhantomJS" class="headerlink" title="PhantomJS"></a>PhantomJS</h3><p>phantomjs是一个基于webkit的无界面浏览器，它会吧万盏加载到的内存并执行页面上的js。</p>
+<h3 id="Chromedriver"><a href="#Chromedriver" class="headerlink" title="Chromedriver"></a>Chromedriver</h3><p>chromedriver也是一个能够被selenium驱动的浏览器，但是和phantomjs的区别在于它是有界面的。<br>我们想通过python代码模拟浏览器，打开浏览器，获取数据，就需要这样一个驱动去启动浏览器。<br><a target="_blank" rel="noopener" href="https://googlechromelabs.github.io/chrome-for-testing/">https://googlechromelabs.github.io/chrome-for-testing/</a><br>因为我使用的是虚拟环境，所以我将chromedriver.exe放于原环境和虚拟环境中都进行了尝试，发现都可以，只要是于python.exe在同一目录下即可。</p>
+<h3 id="selenium的简单使用"><a href="#selenium的简单使用" class="headerlink" title="selenium的简单使用"></a>selenium的简单使用</h3><p>selenium的本质是模拟浏览器</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    <span class="comment"># 创建一个浏览器对象</span></span><br><span class="line">    chr_obj = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 发送请求</span></span><br><span class="line">    chr_obj.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 提取访问页面的源代码</span></span><br><span class="line">    str_data = chr_obj.page_source</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;baidu.html&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(str_data)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 关闭页面</span></span><br><span class="line">    chr_obj.close()</span><br><span class="line">    <span class="comment"># time.sleep(6)</span></span><br><span class="line">    <span class="comment"># 关闭浏览器</span></span><br><span class="line">    chr_obj.quit()</span><br></pre></td></tr></table></figure>
+<p>在使用中，Google浏览器怎么运行都出不来，有一次运行了好久才出来，出来之后报错Exception managing chrome: error sending request for url ，通过不断找资料最后加上自己的调试。<br>最后将selenium的版本调制4.1.1得以解决问题。<br><img src="/img/crawler03/08.png"><br>如果没有将chromedriver.exe放在python.exe的同一目录下，就需要在创建对象时添加一个参数：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chr_obj = webdriver.Chrome(executable_path=<span class="string">&#x27;chromedriver.exe所在的路径&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="selenium无界面模式"><a href="#selenium无界面模式" class="headerlink" title="selenium无界面模式"></a>selenium无界面模式</h3><p>之前的浏览器都会进行创建打开的操作，优点是我们可以看到，但是打开同时意味着影响效率。<br>所以我们可以设置成无头模式，来提升效率。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.chrome.options <span class="keyword">import</span> Options</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 设置浏览器不弹出窗口</span></span><br><span class="line">    chrome_options = Options()</span><br><span class="line">    chrome_options.add_argument(<span class="string">&#x27;--headless&#x27;</span>) <span class="comment"># 设置参数1，改成无界面模式</span></span><br><span class="line">    <span class="comment"># 创建一个浏览器对象</span></span><br><span class="line">    chr_obj = webdriver.Chrome(options=chrome_options)</span><br></pre></td></tr></table></figure>
+
+<h2 id="selenium简单使用"><a href="#selenium简单使用" class="headerlink" title="selenium简单使用"></a>selenium简单使用</h2><h3 id="切换窗口"><a href="#切换窗口" class="headerlink" title="切换窗口"></a>切换窗口</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    driver = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 窗口索引为0</span></span><br><span class="line">    driver.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 打开新的窗口，窗口索引为1</span></span><br><span class="line">    driver.execute_script(<span class="string">&quot;window.open(&#x27;https://www.douban.com&#x27;,&#x27;_blank&#x27;);&quot;</span>) <span class="comment"># js代码</span></span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取当前所有窗口</span></span><br><span class="line">    current_window = driver.window_handles</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 根据窗口索引进行切换</span></span><br><span class="line">    <span class="comment"># 切换到窗口索引为0的窗口</span></span><br><span class="line">    driver.switch_to.window(current_window[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 切换到窗口索引为1的窗口</span></span><br><span class="line">    driver.switch_to.window(current_window[<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    driver.quit()</span><br></pre></td></tr></table></figure>
+
+<h3 id="iframe案例"><a href="#iframe案例" class="headerlink" title="iframe案例"></a>iframe案例</h3><p>在一个页面中时常由多个内部页面组成，也就是我们检查页面时看到的iframe标签。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span>  webdriver</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    driver = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line">    driver.get(<span class="string">&#x27;https://music.163.com/&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    driver.maximize_window()</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 进入到内置网页中</span></span><br><span class="line">    driver.switch_to.frame(<span class="string">&#x27;contentFrame&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line">    driver.find_elements(By.XPATH, <span class="string">&#x27;//li/a&#x27;</span>)[<span class="number">2</span>].click()</span><br></pre></td></tr></table></figure>
+
+<h3 id="selenium的其他用法"><a href="#selenium的其他用法" class="headerlink" title="selenium的其他用法"></a>selenium的其他用法</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.ui <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    chrome_ = webdriver.Chrome()</span><br><span class="line">    chrome_.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line">    input_obj = chrome_.find_element(By.ID, <span class="string">&#x27;kw&#x27;</span>)</span><br><span class="line">    input_obj.send_keys(<span class="string">&#x27;你好&#x27;</span>)</span><br><span class="line">    get_obj = chrome_.find_element(By.ID, <span class="string">&#x27;su&#x27;</span>)</span><br><span class="line">    get_obj.click()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># time.sleep(5)</span></span><br><span class="line"></span><br><span class="line">	<span class="comment"># 设置加载时间上限，直至指定标签出现，就会执行下面的代码，虽然效率优于time.sleep()，但过于复杂。</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        element = WebDriverWait(chrome_, <span class="number">10</span>).until(EC.presence_of_element_located((By.ID, <span class="string">&#x27;content_left&#x27;</span>)))</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;超时&#x27;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment"># 获取当前页面的源码</span></span><br><span class="line">    str_data = chrome_.page_source</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;你好.html&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        f.write(str_data)</span><br><span class="line"></span><br><span class="line">    cookie_ = chrome_.get_cookies()</span><br><span class="line">    <span class="built_in">print</span>(cookie_)</span><br></pre></td></tr></table></figure>
+
+<h3 id="滚动页面"><a href="#滚动页面" class="headerlink" title="滚动页面"></a>滚动页面</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.common.by <span class="keyword">import</span> By</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support.ui <span class="keyword">import</span> WebDriverWait</span><br><span class="line"><span class="keyword">from</span> selenium.webdriver.support <span class="keyword">import</span> expected_conditions <span class="keyword">as</span> EC</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line"></span><br><span class="line">    driver = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line">    driver.get(<span class="string">&#x27;https://www.baidu.com&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    driver.find_elements(By.ID, <span class="string">&#x27;kw&#x27;</span>)[<span class="number">0</span>].send_keys(<span class="string">&#x27;python&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    driver.find_element(By.ID, <span class="string">&#x27;su&#x27;</span>).click()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        WebDriverWait(driver, <span class="number">10</span>).until(EC.presence_of_element_located((By.ID, <span class="string">&#x27;content_left&#x27;</span>)))</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;页面加载失败&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># driver.execute_script(&#x27;window.scrollTo(0, 2000)&#x27;)</span></span><br><span class="line">    <span class="comment"># driver.execute_script(&#x27;window.scrollTo(0, document.body.scrollHeight)&#x27;)</span></span><br><span class="line">    driver.execute_script(<span class="string">&#x27;document.documentElement.scrollTop = 2000&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>selenium能够执行网页上的js，对于js渲染的数据和模拟登录处理起来非常容易。<br>selenium由于在获取页面的过程中会发送很多请求，所以效率非常低，并且很多网站也开始对selenium进行反爬，所以selenium我们使用到很少。</p>
+<h3 id="selenium实战"><a href="#selenium实战" class="headerlink" title="selenium实战"></a>selenium实战</h3><p>到这里我们已经学习和了解了selenium，我以爬取<a target="_blank" rel="noopener" href="https://list.suning.com/0-502282-0.html?safp=d488778a.10004.0.47cb7a84d7&safc=cate.0.0&safpn=10008.00014">苏宁易购的图书</a>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> selenium <span class="keyword">import</span> webdriver</span><br><span class="line"><span class="keyword">from</span> lxml <span class="keyword">import</span> etree</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">from</span> selenium.common.exceptions <span class="keyword">import</span> TimeoutException</span><br><span class="line"><span class="keyword">import</span> json</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    url_ = <span class="string">&#x27;https://list.suning.com/0-502282-0.html?safp=d488778a.10004.0.47cb7a84d7&amp;safc=cate.0.0&amp;safpn=10008.00014&#x27;</span></span><br><span class="line"></span><br><span class="line">    chrome_ = webdriver.Chrome()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        chrome_.get(url_)</span><br><span class="line">    <span class="keyword">except</span> TimeoutException:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&#x27;访问超时&#x27;</span>)</span><br><span class="line"></span><br><span class="line">    time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># chrome_.execute_script(&#x27;window.scrollTo(0, 20000)&#x27;)</span></span><br><span class="line">    <span class="comment"># 发现无论设置多大的值，都无法直接到达真正的底部，而是到达一个假底部，所以需要通过循环滚动到底部</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 循环滚动到底部</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        chrome_.execute_script(<span class="string">&#x27;window.scrollTo(0, document.body.scrollHeight)&#x27;</span>)</span><br><span class="line">        time.sleep(<span class="number">2</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 获取页面源码</span></span><br><span class="line">    str_data = chrome_.page_source</span><br><span class="line">    html_obj = etree.HTML(str_data)</span><br><span class="line"></span><br><span class="line">    str_list = html_obj.xpath(<span class="string">&#x27;//div[@class=&quot;res-info&quot;]//a/@aria-label&#x27;</span>)</span><br><span class="line">    price_list = [i.split(<span class="string">&#x27;,&#x27;</span>,<span class="number">1</span>)[<span class="number">0</span>] <span class="keyword">for</span> i <span class="keyword">in</span> str_list]</span><br><span class="line">    name_list = [i.replace(<span class="string">&#x27;\n&#x27;</span>, <span class="string">&#x27;&#x27;</span>).split(<span class="string">&#x27;,&#x27;</span>,<span class="number">1</span>)[<span class="number">1</span>] <span class="keyword">for</span> i <span class="keyword">in</span> str_list]</span><br><span class="line">    all_list = [&#123;<span class="string">&#x27;name&#x27;</span>: name, <span class="string">&#x27;price&#x27;</span>: price&#125; <span class="keyword">for</span> name, price <span class="keyword">in</span> <span class="built_in">zip</span>(name_list, price_list)]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;data.json&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, encoding=<span class="string">&#x27;utf-8&#x27;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        json.dump(all_list, f, ensure_ascii=<span class="literal">False</span>, indent=<span class="number">4</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这段时间的学习，让我对爬虫有了更深入的了解，也对selenium有了更深入的理解。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="http://example.com">Liang</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="http://example.com/2024/07/07/crawler03/">http://example.com/2024/07/07/crawler03/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="http://example.com" target="_blank">Liang Blog</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Crawler/">Crawler</a></div><div class="post_share"><div class="social-share" data-image="/img/Crawler/Crawler.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2024/07/08/crawler04/" title="爬虫-04"><img class="cover" src="/img/Crawler/Crawler.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">爬虫-04</div></div></a></div><div class="next-post pull-right"><a href="/2024/07/06/crawler02/" title="爬虫-02"><img class="cover" src="/img/Crawler/Crawler.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">爬虫-02</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2024/07/04/Crawler/" title="爬虫-基础与学前准备"><img class="cover" src="/img/Crawler/Crawler.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-04</div><div class="title">爬虫-基础与学前准备</div></div></a></div><div><a href="/2024/07/05/crawler01/" title="爬虫-01"><img class="cover" src="/img/Crawler/Crawler.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-05</div><div class="title">爬虫-01</div></div></a></div><div><a href="/2024/07/06/crawler02/" title="爬虫-02"><img class="cover" src="/img/Crawler/Crawler.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-06</div><div class="title">爬虫-02</div></div></a></div><div><a href="/2024/07/08/crawler04/" title="爬虫-04"><img class="cover" src="/img/Crawler/Crawler.png" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2024-07-08</div><div class="title">爬虫-04</div></div></a></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="is-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info__name">Liang</div><div class="author-info__description"></div></div><div class="card-info-data site-data is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">7</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">3</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">2</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gliang1015"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Gliang1015" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a><a class="social-icon" href="/3234891253@qq.com" target="_blank" title="Email"><i class="fas fa-envelope" style="color: #4a7dbe;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%88%AC%E8%99%AB-03"><span class="toc-number">1.</span> <span class="toc-text">爬虫-03</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#refer%E5%8F%8D%E7%88%AC-MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.1.</span> <span class="toc-text">refer反爬&amp;MongoDB数据库</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#refer%E8%B7%B3%E8%BD%AC"><span class="toc-number">1.1.1.</span> <span class="toc-text">refer跳转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="toc-number">1.1.2.</span> <span class="toc-text">数据库</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E5%88%86%E7%B1%BB"><span class="toc-number">1.1.3.</span> <span class="toc-text">数据库的分类</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MongoDB%E7%9A%84%E4%B8%8B%E8%BD%BD"><span class="toc-number">1.1.4.</span> <span class="toc-text">MongoDB的下载</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.</span> <span class="toc-text">MongoDB数据库的操作</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%AE%A4%E8%AF%86MongoDB"><span class="toc-number">1.2.1.</span> <span class="toc-text">认识MongoDB</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%BA%93%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.2.</span> <span class="toc-text">库操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9B%86%E5%90%88%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.3.</span> <span class="toc-text">集合操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%96%87%E6%A1%A3%E6%93%8D%E4%BD%9C"><span class="toc-number">1.2.4.</span> <span class="toc-text">文档操作</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9D%A1%E4%BB%B6"><span class="toc-number">1.2.5.</span> <span class="toc-text">条件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="toc-number">1.2.6.</span> <span class="toc-text">操作符</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MongoDB%E4%B8%8Epython%E4%BA%A4%E4%BA%92"><span class="toc-number">1.2.7.</span> <span class="toc-text">MongoDB与python交互</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#B%E7%AB%99%E6%A1%88%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">B站案例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#selenium%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.4.</span> <span class="toc-text">selenium介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#selenium"><span class="toc-number">1.4.1.</span> <span class="toc-text">selenium</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#PhantomJS"><span class="toc-number">1.4.2.</span> <span class="toc-text">PhantomJS</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Chromedriver"><span class="toc-number">1.4.3.</span> <span class="toc-text">Chromedriver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#selenium%E7%9A%84%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="toc-number">1.4.4.</span> <span class="toc-text">selenium的简单使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#selenium%E6%97%A0%E7%95%8C%E9%9D%A2%E6%A8%A1%E5%BC%8F"><span class="toc-number">1.4.5.</span> <span class="toc-text">selenium无界面模式</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#selenium%E7%AE%80%E5%8D%95%E4%BD%BF%E7%94%A8"><span class="toc-number">1.5.</span> <span class="toc-text">selenium简单使用</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%87%E6%8D%A2%E7%AA%97%E5%8F%A3"><span class="toc-number">1.5.1.</span> <span class="toc-text">切换窗口</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#iframe%E6%A1%88%E4%BE%8B"><span class="toc-number">1.5.2.</span> <span class="toc-text">iframe案例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#selenium%E7%9A%84%E5%85%B6%E4%BB%96%E7%94%A8%E6%B3%95"><span class="toc-number">1.5.3.</span> <span class="toc-text">selenium的其他用法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BB%9A%E5%8A%A8%E9%A1%B5%E9%9D%A2"><span class="toc-number">1.5.4.</span> <span class="toc-text">滚动页面</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#selenium%E5%AE%9E%E6%88%98"><span class="toc-number">1.5.5.</span> <span class="toc-text">selenium实战</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.6.</span> <span class="toc-text">总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2024/07/08/crawler04/" title="爬虫-04"><img src="/img/Crawler/Crawler.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="爬虫-04"/></a><div class="content"><a class="title" href="/2024/07/08/crawler04/" title="爬虫-04">爬虫-04</a><time datetime="2024-07-07T16:00:00.000Z" title="发表于 2024-07-08 00:00:00">2024-07-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/07/crawler03/" title="爬虫-03"><img src="/img/Crawler/Crawler.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="爬虫-03"/></a><div class="content"><a class="title" href="/2024/07/07/crawler03/" title="爬虫-03">爬虫-03</a><time datetime="2024-07-06T16:00:00.000Z" title="发表于 2024-07-07 00:00:00">2024-07-07</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/06/crawler02/" title="爬虫-02"><img src="/img/Crawler/Crawler.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="爬虫-02"/></a><div class="content"><a class="title" href="/2024/07/06/crawler02/" title="爬虫-02">爬虫-02</a><time datetime="2024-07-05T16:00:00.000Z" title="发表于 2024-07-06 00:00:00">2024-07-06</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/05/crawler01/" title="爬虫-01"><img src="/img/Crawler/Crawler.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="爬虫-01"/></a><div class="content"><a class="title" href="/2024/07/05/crawler01/" title="爬虫-01">爬虫-01</a><time datetime="2024-07-04T16:00:00.000Z" title="发表于 2024-07-05 00:00:00">2024-07-05</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2024/07/04/Crawler/" title="爬虫-基础与学前准备"><img src="/img/Crawler/Crawler.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="爬虫-基础与学前准备"/></a><div class="content"><a class="title" href="/2024/07/04/Crawler/" title="爬虫-基础与学前准备">爬虫-基础与学前准备</a><time datetime="2024-07-03T16:00:00.000Z" title="发表于 2024-07-04 00:00:00">2024-07-04</time></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2024 By Liang</div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=4.13.0"></script><script src="/js/main.js?v=4.13.0"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.33/dist/fancybox/fancybox.umd.min.js"></script><div class="js-pjax"></div><script src="/js/snowflake.js"></script><script id="click-show-text" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.3/dist/click-show-text.min.js" data-mobile="false" data-text="明明,I,LOVE,YOU,liang,阿发,椋" data-fontsize="15px" data-random="false" async="async"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script>let pjaxSelectors = ["head > title","#config-diff","#body-wrap","#rightside-config-hide","#web_bg","#rightside-config-show",".js-pjax"]
+
+var pjax = new Pjax({
+  elements: 'a:not([target="_blank"])',
+  selectors: pjaxSelectors,
+  cacheBust: false,
+  analytics: false,
+  scrollRestoration: false
+})
+
+document.addEventListener('pjax:send', function () {
+
+  // removeEventListener
+  btf.removeGlobalFnEvent('pjax')
+  btf.removeGlobalFnEvent('themeChange')
+
+  document.getElementById('rightside').classList.remove('rightside-show')
+  
+  if (window.aplayers) {
+    for (let i = 0; i < window.aplayers.length; i++) {
+      if (!window.aplayers[i].options.fixed) {
+        window.aplayers[i].destroy()
+      }
+    }
+  }
+
+  typeof typed === 'object' && typed.destroy()
+
+  //reset readmode
+  const $bodyClassList = document.body.classList
+  $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+
+  typeof disqusjs === 'object' && disqusjs.destroy()
+})
+
+document.addEventListener('pjax:complete', function () {
+  window.refreshFn()
+
+  document.querySelectorAll('script[data-pjax]').forEach(item => {
+    const newScript = document.createElement('script')
+    const content = item.text || item.textContent || item.innerHTML || ""
+    Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+    newScript.appendChild(document.createTextNode(content))
+    item.parentNode.replaceChild(newScript, item)
+  })
+
+  GLOBAL_CONFIG.islazyload && window.lazyLoadInstance.update()
+
+  typeof panguInit === 'function' && panguInit()
+
+  // google analytics
+  typeof gtag === 'function' && gtag('config', '', {'page_path': window.location.pathname});
+
+  // baidu analytics
+  typeof _hmt === 'object' && _hmt.push(['_trackPageview',window.location.pathname]);
+
+  typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+
+  // prismjs
+  typeof Prism === 'object' && Prism.highlightAll()
+})
+
+document.addEventListener('pjax:error', e => {
+  if (e.request.status === 404) {
+    pjax.loadUrl('/404.html')
+  }
+})</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><span id="loading-status"></span><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="is-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据库加载中</span></div><div class="search-wrap"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div><hr/><div id="local-search-results"></div><div id="local-search-stats-wrap"></div></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=4.13.0"></script></div></div></body></html>
